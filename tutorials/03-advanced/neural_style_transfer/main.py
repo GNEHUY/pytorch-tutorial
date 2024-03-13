@@ -10,7 +10,10 @@ import numpy as np
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 def load_image(image_path, transform=None, max_size=None, shape=None):
     """Load an image and convert it to a torch tensor."""
@@ -19,7 +22,7 @@ def load_image(image_path, transform=None, max_size=None, shape=None):
     if max_size:
         scale = max_size / max(image.size)
         size = np.array(image.size) * scale
-        image = image.resize(size.astype(int), Image.ANTIALIAS)
+        image = image.resize(size.astype(int), Image.LANCZOS)
     
     if shape:
         image = image.resize(shape, Image.LANCZOS)

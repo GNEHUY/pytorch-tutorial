@@ -12,7 +12,10 @@ import torchvision.transforms as transforms
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 # Hyper-parameters
 num_epochs = 80
@@ -51,6 +54,7 @@ def conv3x3(in_channels, out_channels, stride=1):
                      stride=stride, padding=1, bias=False)
 
 # Residual block
+"""downsample下采样函数，默认为None。如果需要改变输入的维度以匹配残差路径的输出维度，则使用此参数。"""
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super(ResidualBlock, self).__init__()

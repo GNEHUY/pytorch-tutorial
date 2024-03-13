@@ -8,7 +8,10 @@ from data_utils import Dictionary, Corpus
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 # Hyper-parameters
 embed_size = 128

@@ -8,7 +8,10 @@ from torchvision.utils import save_image
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 # Create a directory if not exists
 sample_dir = 'samples'
@@ -44,11 +47,14 @@ class VAE(nn.Module):
         self.fc3 = nn.Linear(h_dim, z_dim)
         self.fc4 = nn.Linear(z_dim, h_dim)
         self.fc5 = nn.Linear(h_dim, image_size)
-        
+
+    """输出两个向量：均值mu和对数方差log_var。这两个向量描述了潜在空间中的一个分布，从中可以抽样得到潜在表示z。"""    
     def encode(self, x):
         h = F.relu(self.fc1(x))
         return self.fc2(h), self.fc3(h)
     
+    """"为了能够通过反向传播进行梯度下降，VAE使用了一个技巧，称为重参数化（reparameterization trick）。
+    这个方法接受均值mu和对数方差log_var，生成一个潜在空间中的样本z"""
     def reparameterize(self, mu, log_var):
         std = torch.exp(log_var/2)
         eps = torch.randn_like(std)
@@ -58,6 +64,7 @@ class VAE(nn.Module):
         h = F.relu(self.fc4(z))
         return F.sigmoid(self.fc5(h))
     
+    """forward方法返回重构的输入、均值和对数方差，这些输出可用于计算重构损失和KL散度损失，进而训练模型。"""
     def forward(self, x):
         mu, log_var = self.encode(x)
         z = self.reparameterize(mu, log_var)

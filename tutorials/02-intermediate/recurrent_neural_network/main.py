@@ -5,7 +5,10 @@ import torchvision.transforms as transforms
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 # Hyper-parameters
 sequence_length = 28

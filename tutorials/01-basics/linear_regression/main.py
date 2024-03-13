@@ -49,7 +49,7 @@ predicted = model(torch.from_numpy(x_train)).detach().numpy()
 plt.plot(x_train, y_train, 'ro', label='Original data')
 plt.plot(x_train, predicted, label='Fitted line')
 plt.legend()
-plt.show()
+plt.savefig('linear_regression.png')
 
 # Save the model checkpoint
 torch.save(model.state_dict(), 'model.ckpt')

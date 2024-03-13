@@ -7,7 +7,10 @@ from torchvision.utils import save_image
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:4')
+else:
+    device = torch.device('cpu')
 
 # Hyper-parameters
 latent_size = 64
@@ -69,6 +72,8 @@ criterion = nn.BCELoss()
 d_optimizer = torch.optim.Adam(D.parameters(), lr=0.0002)
 g_optimizer = torch.optim.Adam(G.parameters(), lr=0.0002)
 
+"""用于将生成器输出的数据范围从[-1, 1]标准化到[0, 1]。
+这在处理图像数据时很常见，因为生成器通常使用tanh作为最后一层的激活函数，输出范围为[-1, 1]，而图像数据一般在[0, 1]或[0, 255]范围内"""
 def denorm(x):
     out = (x + 1) / 2
     return out.clamp(0, 1)
